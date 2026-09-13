@@ -14,7 +14,6 @@ jobs:
     env:
       PYTHONUTF8: "1"
       LLM_API_KEY: sk-ci-placeholder
-      SJTUCLAW_DATA_DIR: ${{ runner.temp }}/sjtuclaw-test-data
       RUN_E2E: "0"
     steps:
       - uses: actions/checkout@v4
@@ -31,4 +30,6 @@ jobs:
         with:
           node-version: "22"
       - name: Isolated regression and frontend checks
+        env:
+          SJTUCLAW_DATA_DIR: ${{ runner.temp }}/sjtuclaw-test-data
         run: python scripts/check.py --full
