@@ -377,7 +377,9 @@ class WorkspaceAndToolTests(Step8Base):
             result.output["citations"][0]["path"],
             str(Path("screenshots") / "formula.png"),
         )
-        self.assertEqual(calls, [(image_path, "formula.png")])
+        self.assertEqual(len(calls), 1)
+        self.assertTrue(calls[0][0].samefile(image_path))
+        self.assertEqual(calls[0][1], "formula.png")
 
     def test_ocr_image_requires_exactly_one_source(self):
         context = ToolExecutionContext("default")

@@ -17,3 +17,4 @@ qqbot-agent-sdk==1.2.2
 qrcode==8.2
 rich==14.3.4
 sympy==1.14.0
+tzdata==2026.4
