@@ -1,0 +1,4 @@
+interface:
+  display_name: "课堂展示大纲"
+  short_description: "根据主题和材料生成含时间安排与讲稿提示的课堂展示结构"
+  default_prompt: "使用 $presentation-outline 创建课堂展示大纲。"

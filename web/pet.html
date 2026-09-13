@@ -1,0 +1,63 @@
+<!doctype html>
+<!-- Electron 桌宠的透明页面壳；同时可由 Gateway 独立预览。 -->
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; style-src 'self'; script-src 'self'">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SJTUClaw 桌宠</title>
+  <link rel="stylesheet" href="/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="/pet.css?v=20260727-3">
+</head>
+<body>
+  <main id="pet-shell" class="pet-shell" data-state="idle">
+    <section id="chat-card" class="chat-card" hidden>
+      <header class="chat-head drag-region">
+        <div class="chat-identity">
+          <strong id="pet-session-title">SJTUClaw</strong>
+          <span id="pet-status">准备好了</span>
+        </div>
+        <nav class="window-actions no-drag" aria-label="窗口操作">
+          <button id="session-switch" type="button" title="切换会话" aria-label="切换会话">⇄</button>
+          <button id="collapse" type="button" title="收起" aria-label="收起">−</button>
+          <button id="close-expanded" type="button" title="隐藏到托盘" aria-label="关闭">×</button>
+        </nav>
+      </header>
+      <section id="pet-session-panel" class="pet-session-panel no-drag" hidden aria-label="会话切换">
+        <div class="pet-session-panel-head">
+          <strong>切换会话</strong>
+          <button id="pet-new-session" type="button">＋ 新会话</button>
+        </div>
+        <div id="pet-session-list" class="pet-session-list"></div>
+      </section>
+      <div id="pet-messages" class="pet-messages"><p class="welcome">今天想一起做点什么？</p></div>
+      <form id="pet-form" class="pet-form no-drag">
+        <textarea id="pet-input" rows="2" placeholder="问问 SJTUClaw…" required></textarea>
+        <button id="pet-send" type="submit">发送</button>
+      </form>
+      <button id="open-web" class="open-web no-drag">打开完整网页</button>
+      <span class="chat-resize-handle resize-s no-drag" data-resize-edge="s"></span>
+      <span class="chat-resize-handle resize-e no-drag" data-resize-edge="e"></span>
+      <span class="chat-resize-handle resize-w no-drag" data-resize-edge="w"></span>
+      <span class="chat-resize-handle resize-ne no-drag" data-resize-edge="ne"></span>
+      <span class="chat-resize-handle resize-nw no-drag" data-resize-edge="nw"></span>
+      <span class="chat-resize-handle resize-se no-drag" data-resize-edge="se" title="拖动边缘或角落调整对话框大小" aria-label="调整对话框大小"></span>
+      <span class="chat-resize-handle resize-sw no-drag" data-resize-edge="sw"></span>
+    </section>
+
+    <div id="compact-controls" class="compact-controls">
+      <span class="drag-handle" title="按住这里拖动桌宠">⠿ 拖动</span>
+      <button id="open-compact" class="compact-open no-drag" type="button" title="打开对话" aria-label="打开对话">↗</button>
+      <button id="close-compact" class="compact-close no-drag" type="button" title="关闭桌宠" aria-label="关闭">×</button>
+    </div>
+    <div id="effects" class="effects" aria-hidden="true"></div>
+    <button id="pet-character" class="pet-character no-drag" aria-label="双击打开 SJTUClaw" title="点我有反应，双击开始聊天">
+      <span class="pet-sprite" aria-hidden="true"></span>
+      <span class="state-label" id="state-label">待命</span>
+    </button>
+  </main>
+  <script src="/vendor/katex/katex.min.js" defer></script>
+  <script src="/vendor/katex/contrib/auto-render.min.js" defer></script>
+  <script src="/pet.js?v=20260731-1" defer></script>
+</body>
+</html>

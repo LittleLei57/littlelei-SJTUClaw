@@ -1,0 +1,4 @@
+interface:
+  display_name: "PDF 文档阅读"
+  short_description: "直接读取 PDF 文本，并对扫描页面执行本地 OCR"
+  default_prompt: "使用 $pdf-reader 读取并分析当前会话中的 PDF 附件。"

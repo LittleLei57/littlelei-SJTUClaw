@@ -1,0 +1,4 @@
+interface:
+  display_name: "Office 文档阅读"
+  short_description: "读取 DOCX 和 PPTX 的正文、幻灯片与讲者备注"
+  default_prompt: "使用 $document-reader 读取并分析当前会话中的 Office 文档。"

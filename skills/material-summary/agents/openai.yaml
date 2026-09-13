@@ -1,0 +1,4 @@
+interface:
+  display_name: "材料总结"
+  short_description: "汇总多份学习材料与课堂笔记并生成可追溯的结构化摘要"
+  default_prompt: "使用 $material-summary 汇总工作区中的学习材料。"

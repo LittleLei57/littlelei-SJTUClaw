@@ -1,0 +1,4 @@
+interface:
+  display_name: "课程报告"
+  short_description: "生成结构清晰、可验收的课程报告 Markdown 草稿"
+  default_prompt: "使用 $course-report 起草一份结构清晰的 Markdown 课程报告。"

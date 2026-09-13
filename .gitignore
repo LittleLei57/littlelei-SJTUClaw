@@ -1,0 +1,67 @@
+# Local secrets
+sjtu_api_key
+.env
+.env.*
+!.env.example
+
+# Python and runtime data
+__pycache__/
+*.py[cod]
+data/
+logs/
+.venv/
+desktop_pet/node_modules/
+desktop_pet/dist/
+web/node_modules/
+node_modules/
+.pytest_cache/
+docs/reference_materials/
+backups/
+diagnostics/
+
+# Local workspaces and editor/agent state
+Workspace/
+.codex/
+.agents/
+.vscode/
+.idea/
+
+# Generated reports, caches and local databases
+*.log
+*.sqlite
+*.sqlite3
+*.sqlite3-*
+*.db
+*.db-*
+*.bak
+*.tmp
+.coverage
+coverage/
+htmlcov/
+
+# Build and release artifacts
+build/
+dist/
+release/
+desktop_pet/out/
+desktop_pet/release/
+*.zip
+*.7z
+*.rar
+*.exe
+*.msi
+
+# Publish only project-authored Skills, including after future local installs.
+/skills/*
+!/skills/README.md
+!/skills/course-report/
+!/skills/document-reader/
+!/skills/material-summary/
+!/skills/pdf-reader/
+!/skills/presentation-outline/
+!/skills/repository-briefing/
+
+# Generated / personal documents; keep the Markdown sources.
+/*.docx
+/*.pdf
+/docs/*.pdf

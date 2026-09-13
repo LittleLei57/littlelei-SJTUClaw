@@ -1,0 +1,284 @@
+<!doctype html>
+<!-- SJTUClaw Web 应用壳；动态内容和行为由 app.js 注入。 -->
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SJTUClaw</title>
+  <link rel="icon" href="/favicon.svg?v=20260708-2" type="image/svg+xml">
+  <link rel="stylesheet" href="/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="/styles.css?v=20260731-1">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <button id="brand-avatar" class="brand-mark avatar brand-avatar" type="button" aria-label="用户头像" title="点击更换用户头像；右键恢复默认">你</button>
+        <div class="brand-copy">
+          <strong>SJTUClaw</strong>
+          <span class="brand-subtitle">Agent Runtime</span>
+        </div>
+      </div>
+      <button id="new-session" class="new-button">＋ 新建会话</button>
+      <div class="section-label">会话</div>
+      <nav id="session-list" class="session-list" aria-label="会话列表"></nav>
+      <blockquote id="daily-quote" class="daily-quote">
+        <p></p>
+      </blockquote>
+      <div class="sidebar-foot">
+        <div><span class="status-dot"></span><span id="gateway-status">正在检查 Gateway…</span></div>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <div id="drop-overlay" class="drop-overlay" aria-hidden="true">
+        <div><strong>松开即可上传</strong><span>文件会添加到当前 Session，并设为本轮必须读取</span></div>
+      </div>
+      <header class="topbar">
+        <div>
+          <h1 id="session-title">正在载入…</h1>
+          <div id="session-meta" class="session-meta"></div>
+        </div>
+        <div class="topbar-actions">
+            <label class="model-switcher" title="切换当前 API 已配置的模型" hidden>
+              <span class="model-switcher-icon" aria-hidden="true">✦</span>
+              <select id="model-select" aria-label="当前模型" disabled>
+                <option>加载中…</option>
+              </select>
+            </label>
+            <button id="export-session" class="attach-button subtle-action"><span>⇩</span> 导出</button>
+            <button id="timeline-toggle" class="attach-button"><span>≋</span> Timeline</button>
+            <button id="stress-toggle" class="attach-button subtle-action"><span>▦</span> 诊断</button>
+            <button id="memory-toggle" class="attach-button"><span>◇</span> 记忆</button>
+            <button id="skill-toggle" class="attach-button"><span>✦</span> Skills</button>
+            <button id="task-toggle" class="attach-button"><span>◷</span> 定时任务</button>
+            <div class="topbar-more">
+              <button id="topbar-more-toggle" class="attach-button" type="button" aria-haspopup="menu" aria-expanded="false"><span>•••</span> 更多</button>
+              <div id="topbar-more-menu" class="topbar-more-menu" role="menu" hidden>
+                <button type="button" role="menuitem" data-trigger="export-session">⇩ <span>导出会话</span></button>
+                <button type="button" role="menuitem" data-trigger="timeline-toggle">≋ <span>运行记录</span></button>
+                <button type="button" role="menuitem" data-trigger="stress-toggle">▦ <span>诊断</span></button>
+                <button type="button" role="menuitem" data-trigger="memory-toggle">◇ <span>长期记忆</span></button>
+                <button type="button" role="menuitem" data-trigger="skill-toggle">✦ <span>Skills</span></button>
+              </div>
+            </div>
+        </div>
+      </header>
+      <input id="file-input" type="file" multiple hidden>
+
+      <section id="error-banner" class="error-banner" hidden></section>
+      <section id="version-blocker" class="version-blocker" hidden>
+        <div>
+          <span>VERSION CHECK</span>
+          <h2>网页与 Gateway 版本不兼容</h2>
+          <p id="version-message"></p>
+          <button id="version-reload" type="button">强制刷新页面</button>
+        </div>
+      </section>
+        <section id="attachment-strip" class="attachment-strip" hidden>
+          <span class="strip-label">附件</span>
+          <span id="attachment-mode" class="attachment-mode"></span>
+          <div id="attachment-list" class="attachment-list"></div>
+          <div id="attachment-actions" class="attachment-actions" hidden>
+            <button id="attachment-select-all" type="button">全选</button>
+            <button id="attachment-clear-selection" type="button">取消</button>
+          </div>
+        </section>
+      <section id="download-strip" class="attachment-strip" hidden>
+        <span class="strip-label">输出</span>
+        <div id="download-list" class="attachment-list"></div>
+      </section>
+      <section id="approval-area" class="approval-area" hidden></section>
+      <section id="messages" class="messages" aria-live="polite"></section>
+      <nav id="message-index" class="message-index collapsed" aria-label="当前 Session 消息索引" hidden>
+        <button id="message-index-toggle" class="message-index-toggle" type="button" aria-expanded="false">索引</button>
+        <div class="message-index-panel">
+          <strong id="message-index-title">你的消息</strong>
+          <input id="message-index-search" class="message-index-search" type="search" placeholder="搜索当前 Session">
+          <div id="message-index-list" class="message-index-list"></div>
+        </div>
+      </nav>
+
+      <footer class="composer-wrap">
+        <div id="quote-preview" class="quote-preview" hidden>
+          <div>
+            <span id="quote-preview-label">引用</span>
+            <p id="quote-preview-text"></p>
+          </div>
+          <button id="quote-preview-clear" type="button" aria-label="取消引用">×</button>
+        </div>
+        <div id="composer-skill-chip" class="composer-skill-chip" hidden>
+          <span aria-hidden="true">✦</span>
+          <strong id="composer-skill-name"></strong>
+          <small>用于本轮</small>
+          <button id="composer-skill-clear" type="button" aria-label="取消本轮 Skill">×</button>
+        </div>
+        <form id="composer" class="composer">
+          <div id="slash-command-menu" class="slash-command-menu" role="listbox" aria-label="斜杠命令" hidden>
+            <div class="slash-command-heading">
+              <strong>快捷功能</strong>
+              <span>继续输入以筛选</span>
+            </div>
+            <div id="slash-command-list" class="slash-command-list"></div>
+          </div>
+          <div id="composer-attachment-preview" class="composer-attachment-preview" aria-label="本轮附件" hidden></div>
+          <div class="composer-add-shell">
+            <button id="composer-add" class="composer-attach" type="button" title="添加附件或 Skill" aria-label="添加附件或 Skill" aria-haspopup="menu" aria-expanded="false"><span class="composer-plus-icon" aria-hidden="true"></span></button>
+            <div id="composer-add-menu" class="composer-add-menu" role="menu" hidden>
+              <button id="composer-upload-files" class="composer-menu-item" type="button" role="menuitem">
+                <span class="composer-menu-icon" aria-hidden="true">⌕</span>
+                <span><strong>上传文件或图片</strong><small>从电脑选择 · Ctrl+U</small></span>
+              </button>
+              <button id="composer-select-attachments" class="composer-menu-item" type="button" role="menuitem">
+                <span class="composer-menu-icon" aria-hidden="true">◫</span>
+                <span><strong>选择已有附件</strong><small>指定本轮必须读取的材料</small></span>
+              </button>
+              <div class="composer-menu-divider"></div>
+              <button id="composer-skill-menu-toggle" class="composer-menu-item" type="button" role="menuitem" aria-haspopup="menu" aria-expanded="false">
+                <span class="composer-menu-icon" aria-hidden="true">✦</span>
+                <span><strong>使用 Skill</strong><small>为本轮加载专业工作流</small></span>
+                <span class="composer-menu-chevron" aria-hidden="true">›</span>
+              </button>
+              <div id="composer-skill-menu" class="composer-skill-menu" role="menu" hidden>
+                <div class="composer-skill-menu-head">
+                  <strong>选择 Skill</strong>
+                  <small>本轮仅可选择一个</small>
+                </div>
+                <div id="composer-skill-options" class="composer-skill-options"></div>
+              </div>
+              <button id="composer-manage-skills" class="composer-menu-item composer-menu-manage" type="button" role="menuitem">
+                <span class="composer-menu-icon" aria-hidden="true">⚙</span>
+                <span><strong>管理 Skills</strong><small>浏览、调用与查看使用记录</small></span>
+              </button>
+            </div>
+          </div>
+          <textarea id="message-input" rows="1" placeholder="给 SJTUClaw 发消息…"></textarea>
+          <button id="stop-button" class="stop-button" type="button" aria-label="停止" hidden>■</button>
+          <button id="send-button" type="submit" aria-label="发送">↑</button>
+        </form>
+        <p>SJTUClaw 会调用本地 Runtime 和只读工具。请核对重要信息。</p>
+      </footer>
+    </main>
+  </div>
+
+  <dialog id="attachment-preview-dialog" class="attachment-preview-dialog" aria-labelledby="attachment-preview-title">
+    <header>
+      <div><span>附件预览</span><strong id="attachment-preview-title"></strong></div>
+      <div class="attachment-preview-actions">
+        <a id="attachment-preview-download" download>下载原文件</a>
+        <button id="attachment-preview-close" type="button" aria-label="关闭预览">×</button>
+      </div>
+    </header>
+    <div id="attachment-preview-body" class="attachment-preview-body"></div>
+  </dialog>
+
+  <div id="task-backdrop" class="task-backdrop" hidden></div>
+  <aside id="task-panel" class="task-panel" aria-label="定时任务" aria-hidden="true">
+    <header class="task-panel-head">
+      <div><span>Scheduler</span><h2>定时任务</h2></div>
+      <button id="task-close" aria-label="关闭">×</button>
+    </header>
+    <form id="task-form" class="task-form">
+      <label>任务内容<textarea id="task-content" rows="3" required placeholder="例如：总结当前会话的进展"></textarea></label>
+      <div class="task-grid">
+        <label>任务类型<select id="task-type"><option value="once">一次性</option><option value="interval">固定间隔</option><option value="cron">Cron 表达式</option></select></label>
+        <label id="task-time-wrap">触发时间<input id="task-time" type="datetime-local"></label>
+        <label id="task-interval-wrap" hidden>间隔（分钟）<input id="task-interval" type="number" min="1" value="60"></label>
+        <label id="task-start-wrap" hidden>开始时间（可选）<input id="task-start" type="datetime-local"></label>
+        <label id="task-end-wrap" hidden>结束时间（可选）<input id="task-end" type="datetime-local"></label>
+        <label id="task-max-runs-wrap" hidden>最多执行次数（可选）<input id="task-max-runs" type="number" min="1" placeholder="不限制"></label>
+        <label id="task-cron-wrap" hidden>Cron（分 时 日 月 星期）<input id="task-cron" type="text" placeholder="例如：0 9 * * 1-5"></label>
+        <label id="task-timezone-wrap" hidden>时区<input id="task-timezone" type="text" value="Asia/Shanghai"></label>
+      </div>
+      <button class="task-submit" type="submit">创建到当前 Session</button>
+      <details class="task-advanced">
+        <summary>高级执行与投递</summary>
+        <div class="task-grid">
+          <label>执行上下文<select id="exec-context"><option value="main">主 Session</option><option value="current">触发时的当前 Session</option><option value="isolated">独立执行 Session</option></select></label>
+          <label>结果投递<select id="delivery-mode"><option value="session">回到 Session 最近渠道</option><option value="channel">指定渠道</option><option value="none">仅记录，不主动发送</option><option value="webhook">Webhook</option></select></label>
+          <label id="delivery-channel-wrap" hidden>目标渠道（可多选）<select id="delivery-channels" multiple size="3"><option value="feishu">飞书</option><option value="qqbot">QQ</option><option value="weixin">微信</option></select></label>
+        </div>
+      </details>
+    </form>
+    <div class="task-list-head"><strong>全部任务</strong><button id="task-refresh">刷新</button></div>
+    <div id="task-list" class="task-list"></div>
+  </aside>
+
+  <div id="skill-backdrop" class="task-backdrop" hidden></div>
+  <aside id="skill-panel" class="task-panel" aria-label="Skills" aria-hidden="true">
+    <header class="task-panel-head">
+      <div><span>Reusable workflows</span><h2>Skills</h2></div>
+      <button id="skill-close" aria-label="关闭">×</button>
+    </header>
+    <div id="skill-list" class="skill-list"></div>
+    <form id="skill-form" class="task-form">
+      <label>选择 Skill<select id="skill-select"></select></label>
+      <label>任务<textarea id="skill-task" rows="4" required placeholder="描述主题、材料、字数和保存路径"></textarea></label>
+      <button class="task-submit" type="submit">在当前 Session 中调用</button>
+    </form>
+    <div class="task-list-head"><strong>当前 Session 使用记录</strong><button id="skill-refresh">刷新</button></div>
+    <div id="skill-usage" class="task-list"></div>
+  </aside>
+
+  <div id="timeline-backdrop" class="task-backdrop" hidden></div>
+  <aside id="timeline-panel" class="task-panel" aria-label="Agent Timeline · 运行轨迹" aria-hidden="true">
+    <header class="task-panel-head">
+      <div><span>OBSERVABILITY · 可观测性</span><h2>Agent Timeline · 运行轨迹</h2></div>
+      <button id="timeline-close" aria-label="关闭">×</button>
+    </header>
+    <div id="metrics-summary" class="metrics-summary"></div>
+    <div id="timeline-list" class="timeline-list"></div>
+  </aside>
+
+  <div id="stress-backdrop" class="task-backdrop" hidden></div>
+  <aside id="stress-panel" class="task-panel" aria-label="Session 健康" aria-hidden="true">
+    <header class="task-panel-head">
+      <div><span>STRESS CHECK · 健康检查</span><h2>Session 健康</h2></div>
+      <button id="stress-close" aria-label="关闭">×</button>
+    </header>
+    <p class="memory-intro stress-intro">快速检查当前会话；不会调用模型，也不会修改任何内容。</p>
+    <div id="stress-health" class="stress-health" aria-live="polite"></div>
+    <div class="task-list-head stress-key-head">
+      <strong>关键状态</strong>
+      <button id="stress-refresh">重新检查</button>
+    </div>
+    <div id="stress-summary" class="metrics-summary"></div>
+    <div class="task-list-head stress-attention-head"><strong>需要关注</strong></div>
+    <div id="stress-list" class="stress-list"></div>
+    <details id="stress-technical" class="stress-technical">
+      <summary>查看技术详情</summary>
+      <div id="stress-technical-summary" class="stress-technical-summary"></div>
+      <div id="stress-technical-list" class="stress-list stress-technical-list"></div>
+    </details>
+  </aside>
+
+  <div id="memory-backdrop" class="task-backdrop" hidden></div>
+  <aside id="memory-panel" class="task-panel" aria-label="候选记忆" aria-hidden="true">
+    <header class="task-panel-head">
+      <div><span>Long-term memory</span><h2>候选记忆</h2></div>
+      <button id="memory-close" aria-label="关闭">×</button>
+    </header>
+    <p class="memory-intro">SJTUClaw 会整理对话中明确、稳定的信息。只有你确认后，它们才会进入长期记忆。</p>
+    <div class="task-list-head"><strong>等待确认</strong><button id="memory-refresh">刷新</button></div>
+    <div id="memory-candidate-list" class="memory-candidate-list"></div>
+  </aside>
+
+  <template id="empty-template">
+    <div class="empty-state">
+      <div class="lobster" aria-label="SJTUClaw">
+        <strong>S</strong><span>CLAW</span>
+      </div>
+      <h2>今天，想完成什么？</h2>
+      <p>从一个问题开始，帮你拆解项目、整理材料，把想法一步步落地。</p>
+      <div class="suggestions">
+        <button data-prompt="请快速讲解这个仓库的结构、核心模块和运行入口">读懂这个项目</button>
+        <button data-prompt="请结合当前会话和项目文件，总结目前已经完成的工作和当前进展">梳理当前进展</button>
+        <button data-prompt="请分析当前项目状态，并给出接下来最值得推进的三件事">规划下一步</button>
+      </div>
+    </div>
+  </template>
+  <script src="/vendor/katex/katex.min.js" defer></script>
+  <script src="/vendor/katex/contrib/auto-render.min.js" defer></script>
+  <script src="/app.js?v=20260731-1" defer></script>
+</body>
+</html>

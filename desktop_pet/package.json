@@ -1,0 +1,54 @@
+{
+  "name": "sjtuclaw-desktop-pet",
+  "version": "1.0.0",
+  "private": true,
+  "author": "SJTUClaw Team",
+  "description": "Lightweight desktop companion for the local SJTUClaw Gateway",
+  "main": "main.js",
+  "scripts": {
+    "start": "node launcher.js",
+    "check": "node --check launcher.js && node --check main.js && node --check preload.js",
+    "dist:dir": "electron-builder --win dir",
+    "dist:portable": "electron-builder --win portable",
+    "dist": "electron-builder --win nsis"
+  },
+  "devDependencies": {
+    "electron": "^41.0.2",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "cn.sjtu.sjtuclaw.desktop-pet",
+    "productName": "SJTUClaw Desktop Pet",
+    "artifactName": "SJTUClaw-Desktop-Pet-${version}-${arch}.${ext}",
+    "asar": true,
+    "npmRebuild": false,
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "tray-icon.svg",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "requestedExecutionLevel": "asInvoker"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "SJTUClaw Desktop Pet",
+      "deleteAppDataOnUninstall": false
+    },
+    "publish": null
+  }
+}
